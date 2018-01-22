@@ -6,7 +6,7 @@ Maintaining a well-tested codebase is mission-critical. `apexcov` generates publ
 ## Installation
 
 ```sh
-$ go get -u github.com/jpmonette/apexcov
+$ go get -u github.com/fs-eng/apexcov
 ```
 
 ## Usage
@@ -34,7 +34,7 @@ env:
 - GOPATH=$HOME/go PATH=$GOPATH/bin:$PATH
 before_script:
 - npm install -g coveralls
-- go get github.com/jpmonette/apexcov
+- go get github.com/fs-eng/apexcov
 script:
 - apexcov
 - codeclimate-test-reporter < ./coverage/lcov.info
@@ -50,7 +50,7 @@ Add this to your `circle.yml`:
 machine:
   pre:
     - npm install -g coveralls
-    - go get -u github.com/jpmonette/apexcov
+    - go get -u github.com/fs-eng/apexcov
 test:
   post:
     - apexcov
@@ -68,7 +68,7 @@ env:
 - GOPATH=$HOME/go PATH=$GOPATH/bin:$PATH
 before_script:
 - npm install -g codeclimate-test-reporter
-- go get github.com/jpmonette/apexcov
+- go get github.com/fs-eng/apexcov
 script:
 - apexcov
 - codeclimate-test-reporter < ./coverage/lcov.info
@@ -84,7 +84,7 @@ Add this to your `circle.yml`:
 machine:
   pre:
     - npm install -g codeclimate-test-reporter
-    - go get -u github.com/jpmonette/apexcov
+    - go get -u github.com/fs-eng/apexcov
 test:
   post:
     - apexcov
