@@ -11,7 +11,7 @@ import (
 )
 
 // login executes the login to the SOAP API and returns the Instance URL and Session ID
-func login(instance, username, password string) (instanceUrl, sessionId string, err error) {
+func login(instance, username, password string) (instanceURL, sessionID string, err error) {
 	client := &http.Client{}
 
 	soap := `
@@ -62,9 +62,9 @@ func login(instance, username, password string) (instanceUrl, sessionId string, 
 		return
 	}
 
-	u, err := url.Parse(loginResponse.Instance_url)
-	sessionId = loginResponse.SessionId
-	instanceUrl = "https://" + u.Host
+	u, err := url.Parse(loginResponse.InstanceURL)
+	sessionID = loginResponse.SessionID
+	instanceURL = "https://" + u.Host
 
 	return
 }
@@ -81,9 +81,9 @@ func processError(body []byte) (err error) {
 
 // SoapLoginResponse represents the response of the "login" SOAPAction
 type SoapLoginResponse struct {
-	SessionId    string `xml:"Body>loginResponse>result>sessionId"`
-	Id           string `xml:"Body>loginResponse>result>userId"`
-	Instance_url string `xml:"Body>loginResponse>result>serverUrl"`
+	SessionID   string `xml:"Body>loginResponse>result>sessionId"`
+	ID          string `xml:"Body>loginResponse>result>userId"`
+	InstanceURL string `xml:"Body>loginResponse>result>serverUrl"`
 }
 
 // SoapErrorResponse represents the error response of the SOAP API

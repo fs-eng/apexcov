@@ -60,13 +60,13 @@ func apexcov(c *cli.Context) error {
 		return cli.NewExitError("You must provide a valid instance URL", 1)
 	}
 
-	instanceUrl, sessionId, err := login(instance, username, password)
+	instanceURL, sessionID, err := login(instance, username, password)
 
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	data, err := getCoverage(instanceUrl, sessionId)
+	data, err := getCoverage(instanceURL, sessionID)
 
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -77,10 +77,10 @@ func apexcov(c *cli.Context) error {
 	dir, err := os.Getwd()
 
 	for _, class := range data.Records {
-		if strings.HasPrefix(class.Id, "01p") {
-			body += "SF:" + dir + "/src/classes/" + class.ApexClassOrTrigger.Name + ".cls\n"
+		if strings.HasPrefix(class.ID, "01p") {
+			body += "SF:" + dir + "/classes/" + class.ApexClassOrTrigger.Name + ".cls\n"
 		} else {
-			body += "SF:" + dir + "/src/triggers/" + class.ApexClassOrTrigger.Name + ".cls\n"
+			body += "SF:" + dir + "/triggers/" + class.ApexClassOrTrigger.Name + ".cls\n"
 
 		}
 
@@ -100,10 +100,10 @@ func apexcov(c *cli.Context) error {
 }
 
 // getCoverage gets the Apex code coverage from the Salesforce instance
-func getCoverage(instanceUrl, session string) (coverage CoverageResponse, err error) {
+func getCoverage(instanceURL, session string) (coverage CoverageResponse, err error) {
 	client := &http.Client{}
 
-	endpoint := instanceUrl + "/services/data/v39.0/tooling/query?q="
+	endpoint := instanceURL + "/services/data/v39.0/tooling/query?q="
 	query := "SELECT ApexClassOrTriggerId, ApexClassorTrigger.Name, Coverage FROM ApexCodeCoverageAggregate"
 
 	req, err := http.NewRequest("GET", endpoint+url.QueryEscape(query), nil)
@@ -146,7 +146,7 @@ func persistCoverage(body string) error {
 // CoverageResponse represents the format of the ApexCodeCoverageAggregate query response
 type CoverageResponse struct {
 	Records []struct {
-		Id                 string `json:"ApexClassOrTriggerId"`
+		ID                 string `json:"ApexClassOrTriggerId"`
 		ApexClassOrTrigger struct {
 			Name string `json:"Name"`
 		} `json:"ApexClassOrTrigger"`
