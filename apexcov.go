@@ -80,7 +80,7 @@ func apexcov(c *cli.Context) error {
 		if strings.HasPrefix(class.ID, "01p") {
 			body += "SF:" + dir + "/classes/" + class.ApexClassOrTrigger.Name + ".cls\n"
 		} else {
-			body += "SF:" + dir + "/triggers/" + class.ApexClassOrTrigger.Name + ".cls\n"
+			body += "SF:" + dir + "/triggers/" + class.ApexClassOrTrigger.Name + ".trigger\n"
 
 		}
 
