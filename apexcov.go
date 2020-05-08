@@ -17,8 +17,8 @@ func main() {
 	app := cli.NewApp()
 	app.Usage = "a Test Coverage Generator for Apex"
 	app.Version = "1.0.0"
-	app.Author = "Jean-Philippe Monette"
-	app.Email = "contact@jpmonette.net"
+	// app.Author = "Jean-Philippe Monette"
+	// app.Email = "contact@jpmonette.net"
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
