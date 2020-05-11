@@ -21,17 +21,17 @@ func main() {
 	// app.Email = "contact@jpmonette.net"
 
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
+		&cli.StringFlag{
 			Name:  "instance,i",
 			Value: "https://login.salesforce.com",
 			Usage: "instance to use",
 		},
-		cli.StringFlag{
+		&cli.StringFlag{
 			Name:  "username,u",
 			Value: os.Getenv("APEXCOV_USERNAME"),
 			Usage: "username of the Salesforge org",
 		},
-		cli.StringFlag{
+		&cli.StringFlag{
 			Name:  "password,p",
 			Value: os.Getenv("APEXCOV_PASSWORD"),
 			Usage: "password of the Salesforge org",
