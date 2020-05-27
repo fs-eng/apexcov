@@ -77,22 +77,36 @@ func apexcov(c *cli.Context) error {
 	dir, err := os.Getwd()
 
 	for _, class := range data.Records {
-		if strings.HasPrefix(class.ID, "01p") {
-			body += "SF:" + dir + "/classes/" + class.ApexClassOrTrigger.Name + ".cls\n"
+
+		// Determine if the file is a class or trigger and create filePath accordingly.
+		isClass := strings.HasPrefix(class.ID, "01p")
+		filePath := ""
+
+		if isClass {
+			filePath = dir + "/classes/" + class.ApexClassOrTrigger.Name + ".cls"
 		} else {
-			body += "SF:" + dir + "/triggers/" + class.ApexClassOrTrigger.Name + ".trigger\n"
-
+			filePath = dir + "/triggers/" + class.ApexClassOrTrigger.Name + ".trigger"
 		}
 
-		for _, line := range class.Coverage.CoveredLines {
-			body += "DA:" + strconv.Itoa(line) + ",1\n"
-		}
+		// Only send data to the body output if the file exists in the local sandbox.
+		// This will prevent errors when running the test-reporter format-coverage command.
+		if fileExists(filePath) {
+			if isClass {
+				body += "SF:" + filePath + "\n"
+			} else {
+				body += "SF:" + filePath + "\n"
+			}
 
-		for _, line := range class.Coverage.UncoveredLines {
-			body += "DA:" + strconv.Itoa(line) + ",0\n"
-		}
+			for _, line := range class.Coverage.CoveredLines {
+				body += "DA:" + strconv.Itoa(line) + ",1\n"
+			}
 
-		body += "end_of_record\n"
+			for _, line := range class.Coverage.UncoveredLines {
+				body += "DA:" + strconv.Itoa(line) + ",0\n"
+			}
+
+			body += "end_of_record\n"
+		}
 	}
 
 	persistCoverage(body)
@@ -104,7 +118,7 @@ func getCoverage(instanceURL, session string) (coverage CoverageResponse, err er
 	client := &http.Client{}
 
 	endpoint := instanceURL + "/services/data/v39.0/tooling/query?q="
-	query := "SELECT ApexClassOrTriggerId, ApexClassorTrigger.Name, Coverage FROM ApexCodeCoverageAggregate"
+	query := "SELECT ApexClassOrTriggerId, ApexClassorTrigger.Name, Coverage FROM ApexCodeCoverageAggregate WHERE NOT ApexClassorTrigger.Name = null"
 
 	req, err := http.NewRequest("GET", endpoint+url.QueryEscape(query), nil)
 	req.Header.Add("Authorization", "Bearer "+session)
@@ -141,6 +155,16 @@ func persistCoverage(body string) error {
 
 	err = ioutil.WriteFile("./coverage/lcov.info", []byte(body), 0666)
 	return err
+}
+
+// fileExists checks if a file exists and is not a directory before we
+// try using it to prevent further errors.
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
 
 // CoverageResponse represents the format of the ApexCodeCoverageAggregate query response
